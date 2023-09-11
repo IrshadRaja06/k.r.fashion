@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./s.css">
+</head>
+<body>
+    <div class="buy">  
+        <fieldset>
+            <form action="address.html" id="myForm">
+                <label for="email">Enter Email</label><br>
+                <input type="email" name="email" id="email" pattern="[a-zA-Z0-9._%+-]+@gmail\.com" required><br><br>
+                <label for="phoneNumber">Phone Number:</label><br>
+                <input type="text" id="phoneNumber" name="phoneNumber" maxlength="10" required><br>
+                <button id="generateBtn" type="button">Generate OTP</button><br><br>
+                <label>Enter OTP</label><br>
+                <input type="text" name="otp" id="otp" required><br>
+                <button id="verifyBtn" type="button">Verify OTP</button><br><br><br>
+                <button type="submit" id="submitButton" disabled>Submit</button><br><br>
+                <div id="otpErrorMessage" style="color: red;"></div> <!-- Error message for OTP -->
+            </form>
+        </fieldset>
+    </div>
+
+    <script>
+        // Function to generate a random OTP
+        function generateOTP() {
+            const otpLength = 6; // Length of the OTP
+            const digits = '0123456789';
+            let otp = '';
+
+            for (let i = 0; i < otpLength; i++) {
+                const randomIndex = Math.floor(Math.random() * digits.length);
+                otp += digits.charAt(randomIndex);
+            }
+
+            return otp;
+        }
+
+        // Event listener for the "Generate OTP" button
+        document.getElementById('generateBtn').addEventListener('click', function () {
+            const phoneNumber = document.getElementById('phoneNumber').value; // Get the entered phone number
+            const otpErrorMessage = document.getElementById('otpErrorMessage'); // Get the error message element
+
+            if (!phoneNumber) {
+                otpErrorMessage.textContent = 'Please enter a phone number before generating OTP.';
+            } else {
+                // Clear any previous error message
+                otpErrorMessage.textContent = '';
+
+                const otp = generateOTP();
+                localStorage.setItem('generatedOTP', otp); // Store the OTP in localStorage
+                alert(`Your OTP: ${otp}`);
+            }
+        });
+
+        // Event listener for the "Verify OTP" button
+        document.getElementById('verifyBtn').addEventListener('click', function () {
+            const enteredOTP = document.getElementById('otp').value; // Get the entered OTP
+            const generatedOTP = localStorage.getItem('generatedOTP'); // Get the stored generated OTP
+            const submitButton = document.getElementById('submitButton'); // Get the "Submit" button
+            const otpErrorMessage = document.getElementById('otpErrorMessage'); // Get the error message element
+
+            if (!enteredOTP) {
+                otpErrorMessage.textContent = 'Please enter the OTP.';
+                submitButton.setAttribute('disabled', 'disabled'); // Disable the "Submit" button
+            } else if (enteredOTP === generatedOTP) {
+                alert('OTP Verification Successful');
+                submitButton.removeAttribute('disabled'); // Enable the "Submit" button
+                otpErrorMessage.textContent = ''; // Clear any previous error message
+            } else {
+                otpErrorMessage.textContent = 'Invalid OTP. Please enter the correct OTP.'; // Display error message
+                submitButton.setAttribute('disabled', 'disabled'); // Disable the "Submit" button
+            }
+        });
+
+        const form = document.getElementById('myForm');
+        const emailInput = document.getElementById('email');
+        const emailError = document.getElementById('emailError');
+
+        form.addEventListener('submit', function(event) {
+            const enteredOTP = document.getElementById('otp').value; // Get the entered OTP
+            const otpErrorMessage = document.getElementById('otpErrorMessage'); // Get the error message element
+
+            if (!enteredOTP) {
+                otpErrorMessage.textContent = 'Please enter the OTP before submitting the form.';
+                event.preventDefault(); // Prevent form submission
+            } else {
+                otpErrorMessage.textContent = ''; // Clear any previous error message
+            }
+
+            if (emailInput.value === '') {
+                emailError.textContent = 'Email is required';
+                event.preventDefault(); // Prevent form submission
+            } else {
+                emailError.textContent = '';
+            }
+        });
+    </script>
+
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+    <footer>
+        &copy; 2023 website
+    </footer>
+</body>
+</html>
